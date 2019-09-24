@@ -25,6 +25,19 @@ class Balance(initial: BigDecimal) {
 
     fun withdraw(value: BigDecimal) = add(value.negate())
 
+    fun tryBlock(value: BigDecimal): Boolean {
+        var previous: BigDecimal
+        var newValue: BigDecimal
+        do {
+            previous = ref.get();
+            newValue = previous.subtract(value)
+            if (newValue.compareTo(BigDecimal.ZERO) < 0) {
+                return false;
+            }
+        } while (!ref.compareAndSet(previous, newValue))
+        return true
+    }
+
 
     override fun hashCode(): Int {
         return javaClass.hashCode()
