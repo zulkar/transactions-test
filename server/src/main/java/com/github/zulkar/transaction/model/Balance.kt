@@ -7,11 +7,8 @@ class Balance(initial: BigDecimal) {
     public constructor() : this(BigDecimal.valueOf(0))
 
     private val ref = AtomicReference<BigDecimal>(initial)
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        return true
-    }
+
+    fun get(): BigDecimal = ref.get()
 
     fun add(value: BigDecimal): BigDecimal {
         var previous: BigDecimal
@@ -39,7 +36,4 @@ class Balance(initial: BigDecimal) {
     }
 
 
-    override fun hashCode(): Int {
-        return javaClass.hashCode()
-    }
 }

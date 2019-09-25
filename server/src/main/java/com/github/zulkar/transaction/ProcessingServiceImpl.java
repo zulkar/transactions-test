@@ -5,6 +5,8 @@ import com.github.zulkar.transaction.model.Balance;
 import com.github.zulkar.transaction.model.User;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ProcessingServiceImpl {
@@ -15,6 +17,11 @@ public class ProcessingServiceImpl {
         if (database.putIfAbsent(user, new Balance(initialBalance)) != null) {
             BusinessErrorUtil.throwAlreadyExistsException();
         }
+    }
+
+    public BigDecimal replenish(User user, BigDecimal amount) {
+        validateUserActive(user);
+        return database.get(user).add(amount);
     }
 
     public void transfer(User from, User to, BigDecimal amount) {
@@ -43,5 +50,14 @@ public class ProcessingServiceImpl {
 
     private void validateUsername(User user) {
         BusinessErrorUtil.throwUserNotExists(user);
+    }
+
+    public Collection<User> getAllUsers() {
+        return Collections.list(database.keys());
+    }
+
+    public BigDecimal getBalance(User user) {
+        validateUserActive(user);
+        return database.get(user).get();
     }
 }
