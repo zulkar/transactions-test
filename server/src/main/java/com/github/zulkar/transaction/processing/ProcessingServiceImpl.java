@@ -1,4 +1,4 @@
-package com.github.zulkar.transaction;
+package com.github.zulkar.transaction.processing;
 
 import com.github.zulkar.transaction.errors.BusinessErrorUtil;
 import com.github.zulkar.transaction.model.Balance;
@@ -9,21 +9,24 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ProcessingServiceImpl {
+public class ProcessingServiceImpl implements ProcessingService {
     private ConcurrentHashMap<User, Balance> database = new ConcurrentHashMap<>();
 
-    public void createAccount(User user, BigDecimal initialBalance) {
+    @Override
+    public void createAccount(User user) {
         validateUsername(user);
-        if (database.putIfAbsent(user, new Balance(initialBalance)) != null) {
+        if (database.putIfAbsent(user, new Balance()) != null) {
             BusinessErrorUtil.throwAlreadyExistsException();
         }
     }
 
+    @Override
     public BigDecimal replenish(User user, BigDecimal amount) {
         validateUserActive(user);
         return database.get(user).add(amount);
     }
 
+    @Override
     public void transfer(User from, User to, BigDecimal amount) {
         validateUserActive(from);
         validateUserActive(to);
@@ -52,10 +55,12 @@ public class ProcessingServiceImpl {
         BusinessErrorUtil.throwUserNotExists(user);
     }
 
+    @Override
     public Collection<User> getAllUsers() {
         return Collections.list(database.keys());
     }
 
+    @Override
     public BigDecimal getBalance(User user) {
         validateUserActive(user);
         return database.get(user).get();
