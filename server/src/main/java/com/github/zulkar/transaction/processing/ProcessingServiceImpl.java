@@ -61,7 +61,6 @@ public class ProcessingServiceImpl implements ProcessingService {
         BusinessErrorUtil.throwUserNotExists(user);
     }
 
-    @Override
     @NotNull
     public Collection<User> getAllUsers() {
         return Collections.list(database.keys());

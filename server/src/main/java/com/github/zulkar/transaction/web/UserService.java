@@ -5,6 +5,7 @@ import com.github.zulkar.transaction.processing.ProcessingService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -17,12 +18,13 @@ import static com.github.zulkar.transaction.web.Utils.validateUserNotNull;
 public class UserService {
     private final ProcessingService processingService;
 
+    @Inject
     public UserService(@NotNull ProcessingService processingService) {
         this.processingService = processingService;
     }
 
     @POST
-    @Path("{$user}/create")
+    @Path("{user}/create")
     @Produces(MediaType.APPLICATION_JSON)
     public Response add(@PathParam("user") @Nullable String username) {
         validateUserNotNull(username);
@@ -31,7 +33,7 @@ public class UserService {
     }
 
     @POST
-    @Path("{$user}/replenish")
+    @Path("{user}/replenish")
     @Produces(MediaType.APPLICATION_JSON)
     public Response add(@PathParam("user") @Nullable String username, @QueryParam("amount") @Nullable BigDecimal amount) {
         validateUserNotNull(username);
@@ -41,7 +43,7 @@ public class UserService {
     }
 
     @GET
-    @Path("${user}/balance")
+    @Path("{user}/balance")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBalance(@PathParam("user") @Nullable String username) {
         validateUserNotNull(username);

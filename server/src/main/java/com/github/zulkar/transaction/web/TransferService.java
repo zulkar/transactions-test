@@ -5,6 +5,7 @@ import com.github.zulkar.transaction.processing.ProcessingService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.inject.Inject;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -21,6 +22,7 @@ public class TransferService {
 
     private final ProcessingService processingService;
 
+    @Inject
     public TransferService(@NotNull ProcessingService processingService) {
         this.processingService = processingService;
     }
