@@ -1,5 +1,6 @@
 package com.github.zulkar.transaction;
 
+import com.github.zulkar.transaction.web.BusinessExceptionMapper;
 import com.github.zulkar.transaction.web.TransferService;
 import com.github.zulkar.transaction.web.UserService;
 import org.eclipse.jetty.server.Server;
@@ -18,7 +19,7 @@ public class Main {
         context.setContextPath("/");
         server.setHandler(context);
         initJersey(context,
-                UserService.class, TransferService.class);
+                UserService.class, TransferService.class, BusinessExceptionMapper.class);
 
         try {
             server.start();
@@ -35,9 +36,7 @@ public class Main {
         ServletHolder jerseyServlet = context.addServlet(ServletContainer.class, "/*");
         jerseyServlet.setInitOrder(0);
         jerseyServlet.setInitParameter("javax.ws.rs.Application", MyApplication.class.getCanonicalName());
-        jerseyServlet.setInitParameter(
-                "jersey.config.server.provider.classnames",
-                Arrays.stream(klasses).map(Class::getCanonicalName).collect(Collectors.joining(",")));
+        jerseyServlet.setInitParameter("jersey.config.server.exception.processResponseErrors", "TRUE");
         jerseyServlet.setInitParameter(
                 "jersey.config.server.provider.classnames",
                 Arrays.stream(klasses).map(Class::getCanonicalName).collect(Collectors.joining(",")));

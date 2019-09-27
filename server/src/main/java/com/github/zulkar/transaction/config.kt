@@ -2,6 +2,7 @@ package com.github.zulkar.transaction
 
 import com.github.zulkar.transaction.processing.ProcessingService
 import com.github.zulkar.transaction.processing.ProcessingServiceImpl
+import com.github.zulkar.transaction.web.BusinessExceptionMapper
 import com.github.zulkar.transaction.web.TransferService
 import com.github.zulkar.transaction.web.UserService
 import org.glassfish.jersey.internal.inject.AbstractBinder
@@ -22,5 +23,6 @@ class MyApplication : ResourceConfig() {
     init {
         packages("com.github.zulkar.transaction.web")
         register(MyApplicationBinder())
+        register(BusinessExceptionMapper())
     }
 }
