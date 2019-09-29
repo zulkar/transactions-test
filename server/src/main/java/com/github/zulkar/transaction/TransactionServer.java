@@ -31,7 +31,7 @@ public class TransactionServer {
         server.start();
     }
 
-    public URI getPort() {
+    public URI getUri() {
         return server.getURI();
     }
 
