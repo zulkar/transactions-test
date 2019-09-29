@@ -34,7 +34,6 @@ class HttpClientFixture(private val client: HttpClient, private val serverUri: U
         val get = HttpGet(builder.build())
         val response = client.execute(get);
         val jsonObject = JSONObject(EntityUtils.toString(response.entity))
-        checkStatus(jsonObject)
         return jsonObject.getBigDecimal("balance")
     }
 
@@ -67,3 +66,6 @@ class HttpClientFixture(private val client: HttpClient, private val serverUri: U
     }
 
 }
+
+internal fun Long.toBigDecimal(): BigDecimal = BigDecimal.valueOf(this)
+internal fun Int.toBigDecimal(): BigDecimal = BigDecimal.valueOf(this.toLong())

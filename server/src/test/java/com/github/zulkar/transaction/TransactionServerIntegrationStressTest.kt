@@ -62,7 +62,7 @@ class TransactionServerIntegrationStressTest {
 
         val created = client.getAll()
         assertEquals(usernames.toSet(), created.keys)
-        assertEquals(BigDecimal.valueOf(total.get()), created.values.fold(BigDecimal.ZERO) { acc, e -> acc + e })
+        assertEquals(total.get().toBigDecimal(), created.values.fold(BigDecimal.ZERO) { acc, e -> acc.add(e) })
     }
 
     @Test
@@ -73,7 +73,7 @@ class TransactionServerIntegrationStressTest {
         doTest(100) {
             client.addUser(usernames[it])
             total.addAndGet(1000)
-            client.replenish(usernames[it], BigDecimal.valueOf(1000))
+            client.replenish(usernames[it], 1000.toBigDecimal())
         }
 
         doTest(100) {
@@ -82,9 +82,9 @@ class TransactionServerIntegrationStressTest {
             val to = rand.nextInt(100)
             if (from != to) {
                 try {
-                    client.transer(usernames[from], usernames[to], BigDecimal.valueOf(rand.nextInt(100).toLong()))
+                    client.transer(usernames[from], usernames[to], rand.nextInt(100).toBigDecimal())
                 } catch (e: RuntimeException) {
-                    if (!e.message!!.startsWith("We Require More Minerals ")) {
+                    if (!e.message!!.startsWith("We Require More Minerals")) {
                         throw e
                     }
                 }
@@ -95,7 +95,7 @@ class TransactionServerIntegrationStressTest {
 
         val created = client.getAll()
         assertEquals(usernames.toSet(), created.keys)
-        assertEquals(BigDecimal.valueOf(total.get()), created.values.fold(BigDecimal.ZERO) { acc, e -> acc + e })
+        assertEquals(total.get().toBigDecimal(), created.values.fold(BigDecimal.ZERO) { acc, e -> acc.add(e) })
     }
 
     fun doTest(count: Int, action: (Int) -> Unit) {

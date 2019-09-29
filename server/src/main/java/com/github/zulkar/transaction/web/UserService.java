@@ -38,7 +38,6 @@ public class UserService {
     }
 
 
-
     @GET
     @Path("{user}/balance")
     @Produces(MediaType.APPLICATION_JSON)
@@ -46,14 +45,32 @@ public class UserService {
         LOG.debug("/users/getBalance: user{}", username);
         validateUserNotNull(username);
         BigDecimal balance = processingService.getBalance(new User(username));
-        return Response.status(Response.Status.OK).entity(StatusMessage.OK).build();
+        return Response.status(Response.Status.OK).entity(new BalanceEntity(username, balance)).build();
+    }
+
+    private static class BalanceEntity {
+        private final String user;
+        private final BigDecimal balance;
+
+        private BalanceEntity(String user, BigDecimal balance) {
+            this.user = user;
+            this.balance = balance;
+        }
+
+        public BigDecimal getBalance() {
+            return balance;
+        }
+
+        public String getUser() {
+            return user;
+        }
     }
 
     @GET
     @Path("all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
-        LOG.debug("/users/getall");
+        LOG.debug("/users/all");
         return Response.status(Response.Status.OK)
                 .entity(processingService.getAllUsersWithBalance()
                         .entrySet().stream()
