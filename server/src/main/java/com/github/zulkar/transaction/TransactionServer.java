@@ -26,7 +26,10 @@ public class TransactionServer {
         context.setContextPath("/");
         server.setHandler(context);
         initJersey(context,
-                UserService.class, OperationsService.class, BusinessExceptionMapper.class);
+                UserService.class,
+                OperationsService.class,
+                BusinessExceptionMapper.class,
+                org.glassfish.jersey.jackson.JacksonFeature.class);
 
         server.start();
     }
