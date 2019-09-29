@@ -10,6 +10,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.github.zulkar.transaction.web.Utils.validateAmountNotNull;
 import static com.github.zulkar.transaction.web.Utils.validateUserNotNull;
@@ -29,18 +31,10 @@ public class UserService {
     public Response add(@PathParam("user") @Nullable String username) {
         validateUserNotNull(username);
         processingService.createAccount(new User(username));
-        return Response.status(Response.Status.OK).build();
+        return Response.status(Response.Status.OK).entity(StatusMessage.OK).build();
     }
 
-    @POST
-    @Path("{user}/replenish")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response add(@PathParam("user") @Nullable String username, @QueryParam("amount") @Nullable BigDecimal amount) {
-        validateUserNotNull(username);
-        validateAmountNotNull(amount);
-        BigDecimal balance = processingService.replenish(new User(username), amount);
-        return Response.status(Response.Status.OK).build();
-    }
+
 
     @GET
     @Path("{user}/balance")
@@ -48,7 +42,18 @@ public class UserService {
     public Response getBalance(@PathParam("user") @Nullable String username) {
         validateUserNotNull(username);
         BigDecimal balance = processingService.getBalance(new User(username));
-        return Response.status(Response.Status.OK).build();
+        return Response.status(Response.Status.OK).entity(StatusMessage.OK).build();
+    }
+
+    @GET
+    @Path("all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAll() {
+        return Response.status(Response.Status.OK)
+                .entity(processingService.getAllUsersWithBalance()
+                        .entrySet().stream()
+                        .collect(Collectors.toMap(it -> it.getKey().getName(), Map.Entry::getValue)))
+                .build();
     }
 
 

@@ -6,10 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
@@ -18,12 +15,12 @@ import static com.github.zulkar.transaction.web.Utils.validateAmountNotNull;
 import static com.github.zulkar.transaction.web.Utils.validateUserNotNull;
 
 @Path("/operations")
-public class TransferService {
+public class OperationsService {
 
     private final ProcessingService processingService;
 
     @Inject
-    public TransferService(@NotNull ProcessingService processingService) {
+    public OperationsService(@NotNull ProcessingService processingService) {
         this.processingService = processingService;
     }
 
@@ -35,6 +32,16 @@ public class TransferService {
         validateUserNotNull(to);
         validateAmountNotNull(amount);
         processingService.transfer(new User(from), new User(to), amount);
-        return Response.status(Response.Status.OK).build();
+        return Response.status(Response.Status.OK).entity(StatusMessage.OK).build();
+    }
+
+    @POST
+    @Path("replenish/{user}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response replenish(@PathParam("user") @Nullable String username, @QueryParam("amount") @Nullable BigDecimal amount) {
+        validateUserNotNull(username);
+        validateAmountNotNull(amount);
+        BigDecimal balance = processingService.replenish(new User(username), amount);
+        return Response.status(Response.Status.OK).entity(StatusMessage.OK).build();
     }
 }

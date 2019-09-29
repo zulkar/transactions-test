@@ -6,16 +6,15 @@ import com.github.zulkar.transaction.model.User;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class ProcessingServiceImpl implements ProcessingService {
     private ConcurrentHashMap<User, Balance> database = new ConcurrentHashMap<>();
 
     @Override
     public void createAccount(@NotNull User user) {
-        validateUsername(user);
         if (database.putIfAbsent(user, new Balance()) != null) {
             BusinessErrorUtil.throwAlreadyExistsException(user);
         }
@@ -33,6 +32,7 @@ public class ProcessingServiceImpl implements ProcessingService {
     public void transfer(@NotNull User from, @NotNull User to, @NotNull BigDecimal amount) {
         validateUserActive(from);
         validateUserActive(to);
+        validateUserDifferent(from, to);
         validateAmountPositive(amount);
 
         Balance fromBalance = database.get(from);
@@ -42,6 +42,12 @@ public class ProcessingServiceImpl implements ProcessingService {
             toBalance.add(amount);
         } else {
             BusinessErrorUtil.throwNotEnoughMoney(from, amount);
+        }
+    }
+
+    private void validateUserDifferent(@NotNull User from, @NotNull User to) {
+        if (from.equals(to)){
+            BusinessErrorUtil.throwCannotTransferSelf(from);
         }
     }
 
@@ -57,13 +63,11 @@ public class ProcessingServiceImpl implements ProcessingService {
         }
     }
 
-    private void validateUsername(User user) {
-        BusinessErrorUtil.throwUserNotExists(user);
-    }
-
     @NotNull
-    public Collection<User> getAllUsers() {
-        return Collections.list(database.keys());
+    @Override
+    public Map<User, BigDecimal> getAllUsersWithBalance() {
+        //can be replaced to transformation on-the fly
+        return database.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().get()));
     }
 
     @Override

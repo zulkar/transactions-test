@@ -26,4 +26,10 @@ object BusinessErrorUtil {
     fun throwNotEnoughMoney(user: User, amount: BigDecimal) {
         throw BusinessException(4, "We Require More Minerals. User ${user.name} does not have ${amount}")
     }
+
+    @Suppress("UNUSED_PARAMETER")
+    @JvmStatic
+    fun throwCannotTransferSelf(from: User) {
+        throw BusinessException(5, "Cannot transfer to self")
+    }
 }
