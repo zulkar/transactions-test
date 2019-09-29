@@ -2,6 +2,8 @@ package com.github.zulkar.transaction.web;
 
 import com.github.zulkar.transaction.model.User;
 import com.github.zulkar.transaction.processing.ProcessingService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,11 +15,11 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.github.zulkar.transaction.web.Utils.validateAmountNotNull;
 import static com.github.zulkar.transaction.web.Utils.validateUserNotNull;
 
 @Path("/users")
 public class UserService {
+    private static final Logger LOG = LogManager.getLogger(UserService.class);
     private final ProcessingService processingService;
 
     @Inject
@@ -29,6 +31,7 @@ public class UserService {
     @Path("{user}/create")
     @Produces(MediaType.APPLICATION_JSON)
     public Response add(@PathParam("user") @Nullable String username) {
+        LOG.debug("/users/create: user{}", username);
         validateUserNotNull(username);
         processingService.createAccount(new User(username));
         return Response.status(Response.Status.OK).entity(StatusMessage.OK).build();
@@ -40,6 +43,7 @@ public class UserService {
     @Path("{user}/balance")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBalance(@PathParam("user") @Nullable String username) {
+        LOG.debug("/users/getBalance: user{}", username);
         validateUserNotNull(username);
         BigDecimal balance = processingService.getBalance(new User(username));
         return Response.status(Response.Status.OK).entity(StatusMessage.OK).build();
@@ -49,6 +53,7 @@ public class UserService {
     @Path("all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
+        LOG.debug("/users/getall");
         return Response.status(Response.Status.OK)
                 .entity(processingService.getAllUsersWithBalance()
                         .entrySet().stream()
