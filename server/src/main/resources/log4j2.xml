@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
+        </Console>
+
+        <Console name="transaction_console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="TRANSACTION LOG: %msg: %d{yyyy-MM-dd HH:mm:ss.SSS}%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="error" additivity="false">
+            <AppenderRef ref="console"/>
+        </Root>
+
+        <Logger name="TRANSACTION" level="info" additivity="false">
+            <AppenderRef ref="transaction_console"/>
+        </Logger>
+    </Loggers>
+</Configuration>
